@@ -48,13 +48,17 @@ public class nbaGUI extends JFrame {
 
                         // Now get the full data from playerData (assuming it contains the rest of the stats)
                         Map<String, String> player = playerData.get(selectedRow);
-                        String pts = player.get("PTS");
+                        String totalPoints = player.get("PTS");
+                        String gamesPlayed = player.get("GP");
                         String reb = player.get("REB");
                         String ast = player.get("AST");
                         String tov = player.get("TOV");
 
-                        // Update the details panel with the selected player information
-                        detailsPanel.updateDetails(name, position, age, team, pts, reb, ast, tov);
+                        // Calculate Points Per Game (PPG)
+                        double ppg = Double.parseDouble(totalPoints) / Double.parseDouble(gamesPlayed);
+
+                        // Update the details panel with the selected player information, including PPG
+                        detailsPanel.updateDetails(name, position, age, team, String.format("%.2f", ppg), reb, ast, tov);
                     }
                 }
             }

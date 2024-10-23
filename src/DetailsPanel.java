@@ -4,7 +4,7 @@ import java.awt.*;
 public class DetailsPanel extends JPanel {
 
     // Labels to display player details
-    private JLabel nameLabel, positionLabel, ageLabel, teamLabel, ptsLabel, rebLabel, astLabel, tovLabel;
+    private JLabel nameLabel, positionLabel, ageLabel, teamLabel, ppgLabel, rebLabel, astLabel, tovLabel;
 
     public DetailsPanel() {
         setLayout(new GridLayout(8, 1)); // 8 rows for displaying details
@@ -14,7 +14,7 @@ public class DetailsPanel extends JPanel {
         positionLabel = new JLabel("Position: ");
         ageLabel = new JLabel("Age: ");
         teamLabel = new JLabel("Team: ");
-        ptsLabel = new JLabel("Points (PTS): ");
+        ppgLabel = new JLabel("Points Per Game (PPG): ");
         rebLabel = new JLabel("Rebounds (REB): ");
         astLabel = new JLabel("Assists (AST): ");
         tovLabel = new JLabel("Turnovers (TOV): ");
@@ -24,7 +24,7 @@ public class DetailsPanel extends JPanel {
         add(positionLabel);
         add(ageLabel);
         add(teamLabel);
-        add(ptsLabel);
+        add(ppgLabel);
         add(rebLabel);
         add(astLabel);
         add(tovLabel);
@@ -34,12 +34,12 @@ public class DetailsPanel extends JPanel {
     }
 
     // Method to update the details based on the selected player
-    public void updateDetails(String name, String position, String age, String team, String pts, String reb, String ast, String tov) {
+    public void updateDetails(String name, String position, String age, String team, String ppg, String reb, String ast, String tov) {
         nameLabel.setText("Name: " + name);
         positionLabel.setText("Position: " + position);
         ageLabel.setText("Age: " + age);
         teamLabel.setText("Team: " + team);
-        ptsLabel.setText("Points (PTS): " + pts);
+        ppgLabel.setText("Points Per Game (PPG): " + ppg);
         rebLabel.setText("Rebounds (REB): " + reb);
         astLabel.setText("Assists (AST): " + ast);
         tovLabel.setText("Turnovers (TOV): " + tov);
