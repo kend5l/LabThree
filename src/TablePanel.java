@@ -12,22 +12,21 @@ public class TablePanel extends JPanel {
     public TablePanel(List<Map<String, String>> playerData) {
         setLayout(new BorderLayout());
 
-        // Column names for the table
-        String[] columnNames = {"Player Name", "Position", "Team", "Age"};
+        // Column names for the table (only these four)
+        String[] columnNames = {"Player Name", "Team", "Position", "Age"};
 
         // Initialize the table model with column names
         tableModel = new DefaultTableModel(columnNames, 0);
 
         // Populate table model with data from the CSV
         playerData.forEach(row -> {
-            // Assuming your CSV file has these columns: "Player Name", "Position", "Team", "Age"
             String playerName = row.get("PName");
-            String position = row.get("POS");
             String team = row.get("Team");
+            String position = row.get("POS");
             String age = row.get("Age");
 
-            // Add the row to the table
-            tableModel.addRow(new Object[]{playerName, position, team, age});
+            // Add the row to the table (displaying only name, team, position, and age)
+            tableModel.addRow(new Object[]{playerName, team, position, age});
         });
 
         // Create the table with the model
@@ -38,6 +37,8 @@ public class TablePanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    // Optional: You can add methods to interact with the table, e.g., for sorting or filtering
+    // Method to return the JTable, so it can be accessed by nbaGUI
+    public JTable getTable() {
+        return table;
+    }
 }
-
