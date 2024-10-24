@@ -13,15 +13,17 @@ public class TablePanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private List<Map<String, String>> allPlayerData;  // To hold original unfiltered data
+    private List<Map<String, String>> filteredData;   // To hold the currently filtered data
     private TableRowSorter<DefaultTableModel> sorter; // For sorting the table
+    private StatsPanel statsPanel; // Reference to StatsPanel
 
     private JComboBox<String> positionFilterBox;
     private JComboBox<String> ageFilterBox;
-    private JComboBox<String> gamesPlayedFilterBox;
     private JComboBox<String> teamFilterBox;  // Team filter
 
-    public TablePanel(List<Map<String, String>> playerData) {
+    public TablePanel(List<Map<String, String>> playerData, StatsPanel statsPanel) {
         this.allPlayerData = playerData;  // Store the original data
+        this.statsPanel = statsPanel;     // Initialize the reference to StatsPanel
 
         setLayout(new BorderLayout());
 
@@ -29,7 +31,7 @@ public class TablePanel extends JPanel {
         JPanel filterPanel = createFilterPanel();
 
         // Column names for the table
-        String[] columnNames = {"Player Name", "Team", "Position", "Age", "Games Played"};
+        String[] columnNames = {"Player Name", "Team", "Position", "Age"};
 
         // Initialize the table model with column names
         tableModel = new DefaultTableModel(columnNames, 0);
@@ -59,11 +61,6 @@ public class TablePanel extends JPanel {
         panel.add(new JLabel("Age:"));
         ageFilterBox = new JComboBox<>(getUniqueValues("Age", true));
         panel.add(ageFilterBox);
-
-        // Add games played filter (ascending sort)
-        panel.add(new JLabel("Games Played:"));
-        gamesPlayedFilterBox = new JComboBox<>(getUniqueValues("GP", true));
-        panel.add(gamesPlayedFilterBox);
 
         // Add team filter
         panel.add(new JLabel("Team:"));
@@ -95,8 +92,8 @@ public class TablePanel extends JPanel {
 
     // Populate the table with the player data
     private void populateTable(List<Map<String, String>> filteredData) {
-        // Clear existing rows
-        tableModel.setRowCount(0);
+        this.filteredData = filteredData; // Store the filtered data for later use
+        tableModel.setRowCount(0); // Clear existing rows
 
         // Add rows to the table model
         filteredData.forEach(row -> {
@@ -104,17 +101,18 @@ public class TablePanel extends JPanel {
             String team = row.get("Team");
             String position = row.get("POS");
             String age = row.get("Age");
-            String gamesPlayed = row.get("GP");
 
-            tableModel.addRow(new Object[]{playerName, team, position, age, gamesPlayed});
+            tableModel.addRow(new Object[]{playerName, team, position, age});
         });
+
+        // Update stats based on filtered data
+        statsPanel.updateStats(filteredData);
     }
 
     // Apply sorting and filtering based on the selected options
     private void applyFilters() {
         String positionFilter = (String) positionFilterBox.getSelectedItem();
         String ageFilter = (String) ageFilterBox.getSelectedItem();
-        String gamesPlayedFilter = (String) gamesPlayedFilterBox.getSelectedItem();
         String teamFilter = (String) teamFilterBox.getSelectedItem();
 
         // Filter the data based on the selected filters
@@ -122,7 +120,6 @@ public class TablePanel extends JPanel {
                 .filter(row -> positionFilter.equals("All") || row.get("POS").equals(positionFilter))
                 .filter(row -> ageFilter.equals("All") || row.get("Age").equals(ageFilter))
                 .filter(row -> teamFilter.equals("All") || row.get("Team").equals(teamFilter))
-                .sorted((row1, row2) -> Integer.compare(Integer.parseInt(row1.get("GP")), Integer.parseInt(row2.get("GP"))))
                 .collect(Collectors.toList());
 
         // Update the table with the filtered data
@@ -148,6 +145,11 @@ public class TablePanel extends JPanel {
         }
 
         return values.toArray(new String[0]);
+    }
+
+    // Method to return the filtered data so it can be accessed by nbaGUI
+    public List<Map<String, String>> getFilteredData() {
+        return filteredData;
     }
 
     // Method to return the JTable, so it can be accessed by nbaGUI
