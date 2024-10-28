@@ -7,54 +7,54 @@ import java.util.Map;
 
 public class nbaGUI extends JFrame {
 
-    private DetailsPanel detailsPanel;  // Reference to DetailsPanel
-    private StatsPanel statsPanel;      // Reference to StatsPanel
-    private ChartPanel chartPanel;      // Reference to ChartPanel
+    private DetailsPanel detailsPanel;
+    private StatsPanel statsPanel;
+    private ChartPanel chartPanel;
 
     public nbaGUI(List<Map<String, String>> playerData) {
+
         setTitle("NBA Player Stats");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(2, 2)); // 2 rows, 2 columns to ensure equal size for all panels
+        setLayout(new GridLayout(2, 2));
 
-        // Initialize StatsPanel and ChartPanel
+        // initialize StatsPanel and ChartPanel
         statsPanel = new StatsPanel();
         chartPanel = new ChartPanel();
 
-        // Create and add panels
-        TablePanel tablePanel = new TablePanel(playerData, statsPanel);  // Pass StatsPanel to TablePanel
-        detailsPanel = new DetailsPanel(); // Initialize the DetailsPanel
+        // create and add panels
+        TablePanel tablePanel = new TablePanel(playerData, statsPanel);
+        detailsPanel = new DetailsPanel();
 
         // Add the panels to the grid layout
         add(tablePanel);
-        add(statsPanel);  // Add StatsPanel
+        add(statsPanel);
         add(detailsPanel);
-        add(chartPanel);  // Add the real ChartPanel
+        add(chartPanel);
 
-        // Set initial values in StatsPanel and ChartPanel based on the full player data
-        statsPanel.updateStats(playerData);  // Assuming playerData is the initial data
+        // set initial values in StatsPanel and ChartPanel based on the full player data
+        statsPanel.updateStats(playerData);
         Map<String, Double> initialStatsData = statsPanel.getStatsData();
-        chartPanel.updateChart(initialStatsData);  // Display initial values in the chart
+        chartPanel.updateChart(initialStatsData);
 
-        // Set visibility
         setVisible(true);
 
-        // Add a listener for row selection in the table to update DetailsPanel only
+        // add a listener for row selection in the table to update DetailsPanel
         tablePanel.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
-                    // Get the selected row index in the table
+                    // get the selected row index in the table
                     int selectedRow = tablePanel.getTable().getSelectedRow();
 
                     if (selectedRow != -1) {
-                        // Extract player data from the selected row
+                        //extract player data from the selected row
                         String name = (String) tablePanel.getTable().getValueAt(selectedRow, 0);
                         String team = (String) tablePanel.getTable().getValueAt(selectedRow, 1);
                         String position = (String) tablePanel.getTable().getValueAt(selectedRow, 2);
                         String age = (String) tablePanel.getTable().getValueAt(selectedRow, 3);
 
-                        // Get the actual player data from the filtered list in the TablePanel
+                        // get the actual player data from the filtered list in the TablePanel
                         Map<String, String> player = tablePanel.getFilteredData().get(selectedRow);
                         String totalPoints = player.get("PTS");
                         String gamesPlayed = player.get("GP");
@@ -62,26 +62,26 @@ public class nbaGUI extends JFrame {
                         String ast = player.get("AST");
                         String tov = player.get("TOV");
 
-                        // Calculate Points Per Game (PPG)
+                        // calculate Points Per Game (PPG)
                         double ppg = Double.parseDouble(totalPoints) / Double.parseDouble(gamesPlayed);
 
-                        // Update the details panel with the selected player information
+                        // update the details panel with the selected player information
                         detailsPanel.updateDetails(name, team, position, age, String.format("%.2f", ppg), reb, ast, tov);
                     }
                 }
             }
         });
 
-        // Add a listener to the StatsPanel to update the ChartPanel when stats change
+        // add a listener to the StatsPanel to update the ChartPanel when stats change
         statsPanel.addChangeListener(e -> {
             Map<String, Double> updatedStatsData = statsPanel.getStatsData();
-            chartPanel.updateChart(updatedStatsData);  // Update chart with new stats data
+            chartPanel.updateChart(updatedStatsData);
         });
     }
 
     public static void main(String[] args) {
         try {
-            // Read CSV and initialize GUI
+            // read CSV and initialize GUI
             List<Map<String, String>> playerData = ProcessCSV.readCSV("src/2023_nba_player_stats.csv");
             SwingUtilities.invokeLater(() -> new nbaGUI(playerData));
         } catch (Exception e) {
