@@ -8,6 +8,16 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class TablePanel extends JPanel {
 
     private JTable table;
@@ -137,15 +147,16 @@ public class TablePanel extends JPanel {
 
     // Apply sorting and filtering based on the selected options
     private void applyFilters() {
-        String positionFilter = (String) positionFilterBox.getSelectedItem();
-        String ageFilter = (String) ageFilterBox.getSelectedItem();
-        String teamFilter = (String) teamFilterBox.getSelectedItem();
+        // Create filter strategies based on selected options
+        FilterStrategy positionFilter = new PositionFilter((String) positionFilterBox.getSelectedItem());
+        FilterStrategy ageFilter = new AgeFilter((String) ageFilterBox.getSelectedItem());
+        FilterStrategy teamFilter = new TeamFilter((String) teamFilterBox.getSelectedItem());
 
-        // Filter the data based on the selected filters
+        // Apply all filters
         List<Map<String, String>> filteredData = allPlayerData.stream()
-                .filter(row -> positionFilter.equals("All") || row.get("POS").equals(positionFilter))
-                .filter(row -> ageFilter.equals("All") || row.get("Age").equals(ageFilter))
-                .filter(row -> teamFilter.equals("All") || row.get("Team").equals(teamFilter))
+                .filter(player -> positionFilter.apply(player))
+                .filter(player -> ageFilter.apply(player))
+                .filter(player -> teamFilter.apply(player))
                 .collect(Collectors.toList());
 
         // Update the table with the filtered data

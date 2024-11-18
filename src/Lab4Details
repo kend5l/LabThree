@@ -1,0 +1,31 @@
+1. Strategy Pattern
+- Enables you to define a family of algorithms, encapsulate each as a class, and make them interchangeable.
+
+Advantages:
+- makes the code easier to maintain and extend
+- new filtering strategies can be implemented without modifying existing code
+- the filter logic is reusable in other parts of the application
+
+Implementation:
+- Added a filter strategy interface
+- created filter classes: Team, position, and age
+- integrated the pattern into tablePanel
+
+Integration with existing classes:
+- table panel uses filter strategy implementations to filter the player dynamically based on user input
+- the filtered results are passed to stats panel for updating stats
+
+2. Observer Pattern
+- defines a one to many relationship between objects, where one object notifies multiple observers of state changes.
+
+Advantages:
+- the components are loosely couples to the tablePanel making the system more maintainable.
+- changes in table selections or stats can are immediately reflected in the detail panel.
+- additional observers can easily be added without modifying existing components
+
+Implementation:
+- created the tableSelectionListener interface
+- implemented the interface in observers (details panel, stats panel, table panel)
+- stats panel notifies chart panel of stats changes using change listener interface
+- chart panel listens to stats panel updates and updates the chart dataset
+
