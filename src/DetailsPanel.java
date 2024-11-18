@@ -1,7 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
-public class DetailsPanel extends JPanel {
+public class DetailsPanel extends JPanel implements TableSelectionListener {
 
     // Labels to display player details
     private JLabel nameLabel, positionLabel, ageLabel, teamLabel, ppgLabel, rebLabel, astLabel, tovLabel;
@@ -31,6 +32,27 @@ public class DetailsPanel extends JPanel {
 
         // Set a border for the panel
         setBorder(BorderFactory.createTitledBorder("Player Details"));
+    }
+
+    // Observer Pattern: Update details when notified of a selection change
+    @Override
+    public void onSelectionChanged(Object selectedData) {
+        if (selectedData instanceof Map) {
+            Map<String, String> playerData = (Map<String, String>) selectedData;
+
+            String name = playerData.getOrDefault("PName", "N/A");
+            String position = playerData.getOrDefault("POS", "N/A");
+            String age = playerData.getOrDefault("Age", "N/A");
+            String team = playerData.getOrDefault("Team", "N/A");
+            String ppg = playerData.getOrDefault("PPG", "N/A");
+            String reb = playerData.getOrDefault("REB", "N/A");
+            String ast = playerData.getOrDefault("AST", "N/A");
+            String tov = playerData.getOrDefault("TOV", "N/A");
+
+            updateDetails(name, position, age, team, ppg, reb, ast, tov);
+        } else {
+            clearDetails();
+        }
     }
 
     // Method to update the details based on the selected player
@@ -65,3 +87,4 @@ public class DetailsPanel extends JPanel {
         repaint();
     }
 }
+

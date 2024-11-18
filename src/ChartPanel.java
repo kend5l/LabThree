@@ -6,8 +6,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class ChartPanel extends JPanel {
+public class ChartPanel extends JPanel implements ChangeListener {
 
     private JFreeChart chart;
     private DefaultCategoryDataset dataset;
@@ -51,4 +53,15 @@ public class ChartPanel extends JPanel {
         // Notify the chart that the dataset has been updated
         chart.fireChartChanged();
     }
+
+    // Observer Pattern: React to changes from StatsPanel
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (e.getSource() instanceof StatsPanel) {
+            StatsPanel statsPanel = (StatsPanel) e.getSource();
+            Map<String, Double> statsData = statsPanel.getStatsData();
+            updateChart(statsData);
+        }
+    }
 }
+

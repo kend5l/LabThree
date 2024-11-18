@@ -4,8 +4,8 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TablePanel extends JPanel {
@@ -20,6 +20,9 @@ public class TablePanel extends JPanel {
     private JComboBox<String> positionFilterBox;
     private JComboBox<String> ageFilterBox;
     private JComboBox<String> teamFilterBox;  // Team filter
+
+    // Observer Pattern: List of listeners
+    private List<TableSelectionListener> listeners = new ArrayList<>();
 
     public TablePanel(List<Map<String, String>> playerData, StatsPanel statsPanel) {
         this.allPlayerData = playerData;  // Store the original data
@@ -40,12 +43,35 @@ public class TablePanel extends JPanel {
         table.setRowSorter(sorter); // Attach the sorter to the table
         JScrollPane scrollPane = new JScrollPane(table);
 
+        // Add selection listener to table
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    Object selectedData = filteredData.get(table.convertRowIndexToModel(selectedRow));
+                    notifySelectionListeners(selectedData);
+                }
+            }
+        });
+
         // Populate table initially with all data
         populateTable(allPlayerData);
 
         // Add the filter panel and table to the layout
         add(filterPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+    }
+
+    // Observer Pattern: Add listener
+    public void addSelectionListener(TableSelectionListener listener) {
+        listeners.add(listener);
+    }
+
+    // Observer Pattern: Notify listeners
+    private void notifySelectionListeners(Object selectedData) {
+        for (TableSelectionListener listener : listeners) {
+            listener.onSelectionChanged(selectedData);
+        }
     }
 
     // Create the filter panel with dropdowns
